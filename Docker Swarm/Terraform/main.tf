@@ -11,6 +11,7 @@ resource "proxmox_vm_qemu" "dockerswarm-manager" {
     name            = "dockerswarm-manager-${count.index + 1}"
     agent           = 0
     os_type         = "cloud-init"
+    boot            = "order=scsi0;net0"
     
     # CPU Definition
     cpu {
@@ -19,26 +20,29 @@ resource "proxmox_vm_qemu" "dockerswarm-manager" {
         type        = "host"
         numa        = true
     } 
-    
+
+    # Memory Definition
     memory          = 4096
 
     # Disk Configuration
     scsihw          = "virtio-scsi-pci"
     disks {
+        scsi {
+            scsi0 {
+              disk {
+                storage = "local-lvm"
+                # This value must match your template
+                size    = "25G"
+              }  
+            }   
+        }
         ide {
-            ide2 {
+            # This value must match your template
+            ide2 {  
                 cloudinit {
                     storage = "local-lvm"
                 }
             }
-        }
-        virtio {
-            virtio0 {
-              disk {
-                storage = "local-lvm"
-                size    = 20
-              }  
-            }   
         }
     }
 
@@ -71,6 +75,7 @@ resource "proxmox_vm_qemu" "dockerswarm-worker" {
     name            = "dockerswarm-worker-${count.index + 1}"
     agent           = 0
     os_type         = "cloud-init"
+    boot            = "order=scsi0;net0"
     
     # CPU Definition
     cpu {
@@ -79,26 +84,29 @@ resource "proxmox_vm_qemu" "dockerswarm-worker" {
         type        = "host"
         numa        = true
     } 
-    
+
+    # Memory Definition
     memory          = 4096
 
     # Disk Configuration
     scsihw          = "virtio-scsi-pci"
     disks {
+        scsi {
+            scsi0 {
+              disk {
+                storage = "local-lvm"
+                # This value "XSIZE" must match your template
+                size    = "25G"
+              }  
+            }   
+        }
         ide {
+            # This value ide(x) must match your template 
             ide2 {
                 cloudinit {
                     storage = "local-lvm"
                 }
             }
-        }
-        virtio {
-            virtio0 {
-              disk {
-                storage = "local-lvm"
-                size    = 20
-              }  
-            }   
         }
     }
 
