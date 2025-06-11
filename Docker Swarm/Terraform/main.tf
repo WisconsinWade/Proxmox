@@ -21,21 +21,11 @@ resource "proxmox_vm_qemu" "dockerswarm-manager" {
         numa        = true
     } 
     
-    # Memory Definition
     memory          = 4096
 
     # Disk Configuration
     scsihw          = "virtio-scsi-pci"
     disks {
-        scsi {
-            scsi0 {
-              disk {
-                storage = "local-lvm"
-                size    = "25G"
-                # emulatessd  = true
-              }  
-            }   
-        }
         ide {
             ide2 {
                 cloudinit {
@@ -87,24 +77,35 @@ resource "proxmox_vm_qemu" "dockerswarm-worker" {
         type        = "host"
         numa        = true
     } 
-    
+
+    # Memory Definition
     memory          = 4096
 
     # Disk Configuration
     scsihw          = "virtio-scsi-pci"
     disks {
+        scsi {
+            scsi0 {
+              disk {
+                storage = "local-lvm"
+                # This value "XSIZE" must match your template
+                size    = "25G"
+              }  
+            }   
+        }
         ide {
+            # This value ide(x) must match your template 
             ide2 {
                 cloudinit {
                     storage = "local-lvm"
                 }
             }
         }
-        scsi {
-            scsi0 {
+        virtio {
+            virtio0 {
               disk {
                 storage = "local-lvm"
-                size    = "25G"
+                size    = 20
               }  
             }   
         }
